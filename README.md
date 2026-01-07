@@ -2,39 +2,46 @@ const input = document.getElementById("taskInput");
 const button = document.getElementById("addTask");
 const list = document.getElementById("taskList");
 
+// جلب المهام من التخزين
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
+// دالة عرض المهام
 function renderTasks() {
   list.innerHTML = "";
+
   tasks.forEach((task, index) => {
     const li = document.createElement("li");
     li.textContent = task;
 
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "❌";
-    delBtn.style.marginRight = "10px";
-    delBtn.onclick = () => {
+    // زر حذف
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "❌";
+    deleteBtn.style.marginLeft = "10px";
+
+    deleteBtn.onclick = () => {
       tasks.splice(index, 1);
-      saveTasks();
+      localStorage.setItem("tasks", JSON.stringify(tasks));
       renderTasks();
     };
 
-    li.prepend(delBtn);
+    li.appendChild(deleteBtn);
     list.appendChild(li);
   });
 }
 
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
+// إضافة مهمة
 button.addEventListener("click", () => {
-  if (input.value.trim() !== "") {
-    tasks.push(input.value);
-    input.value = "";
-    saveTasks();
-    renderTasks();
-  }
+  const taskText = input.value.trim();
+  if (taskText === "") return;
+
+  tasks.push(taskText);
+
+  // حفظ في localStorage
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  input.value = "";
+  renderTasks();
 });
 
+// عرض المهام عند فتح الصفحة
 renderTasks();
