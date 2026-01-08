@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<title>Todo App</title>
-
 <style>
-/* خلفية متحركة */
+/* خلفية متحركة مع ألوان البنفسجي، الذهبي، النيلي */
 body {
   margin: 0;
   min-height: 100vh;
@@ -13,9 +7,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(270deg, #667eea, #764ba2, #ff758c, #43cea2);
-  background-size: 800% 800%;
-  animation: bgMove 12s ease infinite;
+  overflow: hidden;
+  background: linear-gradient(270deg, #764ba2, #f9d423, #667eea);
+  background-size: 900% 900%;
+  animation: bgMove 15s ease infinite;
+  position: relative;
 }
 
 @keyframes bgMove {
@@ -24,7 +20,30 @@ body {
   100% {background-position: 0% 50%;}
 }
 
+/* أزهار بيضاء متناثرة */
+body::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image: radial-gradient(circle, white 2px, transparent 2px);
+  background-size: 50px 50px;
+  animation: flowerMove 30s linear infinite;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+@keyframes flowerMove {
+  0% {transform: translate(0, 0) rotate(0deg);}
+  50% {transform: translate(100px, 50px) rotate(180deg);}
+  100% {transform: translate(0, 0) rotate(360deg);}
+}
+
+/* صندوق التطبيق */
 .app {
+  position: relative;
   background: rgba(255,255,255,0.95);
   width: 95%;
   max-width: 420px;
@@ -32,8 +51,10 @@ body {
   border-radius: 18px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.25);
   animation: pop 0.6s ease;
+  z-index: 1;
 }
 
+/* باقي التنسيقات كما هي */
 @keyframes pop {
   from {transform: scale(0.9); opacity: 0;}
   to {transform: scale(1); opacity: 1;}
@@ -64,7 +85,7 @@ input {
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #764ba2, #f9d423, #667eea);
   color: white;
   border: none;
   border-radius: 10px;
@@ -135,99 +156,3 @@ li.done .task-text {
   background: #ff5252;
 }
 </style>
-</head>
-
-<body>
-
-<div class="app">
-  <h1>🔥 مهامي</h1>
-  <div class="counter" id="counter"></div>
-
-  <div class="input-box">
-    <input type="text" id="taskInput" placeholder="اكتب مهمة">
-    <button class="add-btn" id="addTask">➕</button>
-  </div>
-
-  <ul id="taskList"></ul>
-</div>
-
-<script>
-const input = document.getElementById("taskInput");
-const button = document.getElementById("addTask");
-const list = document.getElementById("taskList");
-const counter = document.getElementById("counter");
-
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function updateCounter() {
-  const remaining = tasks.filter(t => !t.done).length;
-  counter.textContent = `المهام المتبقية: ${remaining}`;
-}
-
-function renderTasks() {
-  list.innerHTML = "";
-
-  tasks.forEach((task, index) => {
-    const li = document.createElement("li");
-    if (task.done) li.classList.add("done");
-
-    const span = document.createElement("span");
-    span.className = "task-text";
-    span.textContent = task.text;
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    const doneBtn = document.createElement("button");
-    doneBtn.className = "done-btn";
-    doneBtn.textContent = "✔";
-    doneBtn.onclick = () => {
-      task.done = !task.done;
-      saveTasks();
-      renderTasks();
-    };
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
-    deleteBtn.textContent = "✖";
-    deleteBtn.onclick = () => {
-      tasks.splice(index, 1);
-      saveTasks();
-      renderTasks();
-    };
-
-    actions.appendChild(doneBtn);
-    actions.appendChild(deleteBtn);
-
-    li.appendChild(span);
-    li.appendChild(actions);
-    list.appendChild(li);
-  });
-
-  updateCounter();
-}
-
-function addTask() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  tasks.push({ text, done: false });
-  saveTasks();
-  input.value = "";
-  renderTasks();
-}
-
-button.addEventListener("click", addTask);
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") addTask();
-});
-
-renderTasks();
-</script>
-
-</body>
-</html>
