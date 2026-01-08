@@ -13,7 +13,8 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  background: linear-gradient(270deg, #764ba2, #f9d423, #667eea);
+  /* الخلفية الآن بين البنفسجي والنيلي فقط */
+  background: linear-gradient(270deg, #764ba2, #667eea);
   background-size: 900% 900%;
   animation: bgMove 15s ease infinite;
   position: relative;
@@ -80,7 +81,7 @@ input::placeholder {
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #764ba2, #f9d423, #667eea);
+  background: linear-gradient(135deg, #764ba2, #667eea); /* البنفسجي والنيلي فقط */
   color: white;
   border: none;
   border-radius: 10px;
@@ -159,7 +160,7 @@ li.done .task-text {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 0; /* خلف التطبيق */
+  z-index: 0;
 }
 </style>
 </head>
@@ -174,7 +175,7 @@ li.done .task-text {
 
   <div class="input-box">
     <input type="text" id="taskInput" placeholder="اكتب مهمة">
-    <button class="add-btn" id="addTask">➕</button>
+    <button class="add-btn" id="addTask">إضافة</button>
   </div>
 
   <ul id="taskList"></ul>
