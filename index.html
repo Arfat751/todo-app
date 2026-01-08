@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Todo App</title>
-
 <style>
 body {
   margin: 0;
@@ -13,8 +12,7 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  /* الخلفية الآن بين البنفسجي والنيلي فقط */
-  background: linear-gradient(270deg, #764ba2, #667eea);
+  background: linear-gradient(270deg, #764ba2, #667eea); /* البنفسجي والنيلي */
   background-size: 900% 900%;
   animation: bgMove 15s ease infinite;
   position: relative;
@@ -26,10 +24,10 @@ body {
   100% {background-position: 0% 50%;}
 }
 
-/* صندوق التطبيق شفاف بزجاج */
+/* صندوق التطبيق شفاف */
 .app {
   position: relative;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.15);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-radius: 18px;
@@ -37,14 +35,8 @@ body {
   width: 95%;
   max-width: 420px;
   padding: 20px;
-  animation: pop 0.6s ease;
   z-index: 1;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-@keyframes pop {
-  from {transform: scale(0.9); opacity: 0;}
-  to {transform: scale(1); opacity: 1;}
+  border: 1px solid rgba(255,255,255,0.3);
 }
 
 h1 {
@@ -81,7 +73,7 @@ input::placeholder {
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #764ba2, #667eea); /* البنفسجي والنيلي فقط */
+  background: linear-gradient(135deg, #764ba2, #667eea);
   color: white;
   border: none;
   border-radius: 10px;
@@ -110,15 +102,9 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  animation: slideIn 0.3s ease;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   color: #fff;
-}
-
-@keyframes slideIn {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
 }
 
 .task-text {
@@ -147,15 +133,10 @@ li.done .task-text {
   cursor: pointer;
 }
 
-.done-btn {
-  background: #4caf50;
-}
+.done-btn { background: #4caf50; }
+.delete-btn { background: #ff5252; }
 
-.delete-btn {
-  background: #ff5252;
-}
-
-/* Canvas الزهور على شكل نجوم */
+/* Canvas الزهور */
 #flowerCanvas {
   position: fixed;
   top: 0;
@@ -164,7 +145,6 @@ li.done .task-text {
 }
 </style>
 </head>
-
 <body>
 
 <canvas id="flowerCanvas"></canvas>
@@ -190,143 +170,58 @@ const counter = document.getElementById("counter");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function updateCounter() {
-  const remaining = tasks.filter(t => !t.done).length;
-  counter.textContent = `المهام المتبقية: ${remaining}`;
-}
+function saveTasks() { localStorage.setItem("tasks", JSON.stringify(tasks)); }
+function updateCounter() { counter.textContent = `المهام المتبقية: ${tasks.filter(t=>!t.done).length}`; }
 
 function renderTasks() {
   list.innerHTML = "";
-
-  tasks.forEach((task, index) => {
+  tasks.forEach((task,index)=>{
     const li = document.createElement("li");
-    if (task.done) li.classList.add("done");
-
-    const span = document.createElement("span");
-    span.className = "task-text";
-    span.textContent = task.text;
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    const doneBtn = document.createElement("button");
-    doneBtn.className = "done-btn";
-    doneBtn.textContent = "✔";
-    doneBtn.onclick = () => {
-      task.done = !task.done;
-      saveTasks();
-      renderTasks();
-    };
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
-    deleteBtn.textContent = "✖";
-    deleteBtn.onclick = () => {
-      tasks.splice(index, 1);
-      saveTasks();
-      renderTasks();
-    };
-
-    actions.appendChild(doneBtn);
-    actions.appendChild(deleteBtn);
-
-    li.appendChild(span);
-    li.appendChild(actions);
-    list.appendChild(li);
+    if(task.done) li.classList.add("done");
+    const span=document.createElement("span");
+    span.className="task-text"; span.textContent=task.text;
+    const actions=document.createElement("div"); actions.className="actions";
+    const doneBtn=document.createElement("button"); doneBtn.className="done-btn"; doneBtn.textContent="✔";
+    doneBtn.onclick=()=>{task.done=!task.done; saveTasks(); renderTasks();}
+    const deleteBtn=document.createElement("button"); deleteBtn.className="delete-btn"; deleteBtn.textContent="✖";
+    deleteBtn.onclick=()=>{tasks.splice(index,1); saveTasks(); renderTasks();}
+    actions.appendChild(doneBtn); actions.appendChild(deleteBtn);
+    li.appendChild(span); li.appendChild(actions); list.appendChild(li);
   });
-
   updateCounter();
 }
 
-function addTask() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  tasks.push({ text, done: false });
-  saveTasks();
-  input.value = "";
-  renderTasks();
-}
-
-button.addEventListener("click", addTask);
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") addTask();
-});
-
+button.addEventListener("click",addTask);
+input.addEventListener("keydown",e=>{if(e.key==="Enter") addTask();});
+function addTask(){const t=input.value.trim();if(!t) return; tasks.push({text:t,done:false}); saveTasks(); input.value=""; renderTasks();}
 renderTasks();
 
-// ---------- الزهور على شكل نجوم ----------
-const canvas = document.getElementById("flowerCanvas");
-const ctx = canvas.getContext("2d");
+// ---------- نجوم بيضاء متحركة ----------
+const canvas=document.getElementById("flowerCanvas");
+const ctx=canvas.getContext("2d");
+let width=canvas.width=window.innerWidth;
+let height=canvas.height=window.innerHeight;
+window.addEventListener("resize",()=>{width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight;});
 
-let width = canvas.width = window.innerWidth;
-let height = canvas.height = window.innerHeight;
+function randomStar(){ const spikes=5; const outer=3+Math.random()*3; const inner=outer/2; return {spikes,outer,inner}; }
+const stars=[];
+for(let i=0;i<60;i++){const s=randomStar(); stars.push({x:Math.random()*width,y:Math.random()*height,size:s.outer,inner:s.inner,spikes:s.spikes,speed:0.2+Math.random()*0.5,angle:Math.random()*Math.PI*2});}
 
-window.addEventListener("resize", () => {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-});
-
-// توليد النجوم
-function randomStar() {
-  const spikes = 5;
-  const outerRadius = 3 + Math.random()*3;
-  const innerRadius = outerRadius/2;
-  return {spikes, outerRadius, innerRadius};
-}
-
-const stars = [];
-for (let i=0; i<60; i++) {
-  const s = randomStar();
-  stars.push({
-    x: Math.random()*width,
-    y: Math.random()*height,
-    size: s.outerRadius,
-    inner: s.innerRadius,
-    spikes: s.spikes,
-    speed: 0.2 + Math.random()*0.5,
-    angle: Math.random()*Math.PI*2
-  });
-}
-
-// رسم نجمة
-function drawStar(x, y, spikes, outerRadius, innerRadius){
-  let rot = Math.PI/2*3;
-  let step = Math.PI/spikes;
-  ctx.beginPath();
-  ctx.moveTo(x, y - outerRadius);
+function drawStar(x,y,spikes,outer,inner){
+  let rot=Math.PI/2*3; let step=Math.PI/spikes; ctx.beginPath(); ctx.moveTo(x,y-outer);
   for(let i=0;i<spikes;i++){
-    let sx = x + Math.cos(rot)*outerRadius;
-    let sy = y + Math.sin(rot)*outerRadius;
-    ctx.lineTo(sx, sy);
-    rot += step;
-
-    sx = x + Math.cos(rot)*innerRadius;
-    sy = y + Math.sin(rot)*innerRadius;
-    ctx.lineTo(sx, sy);
-    rot += step;
+    let sx=x+Math.cos(rot)*outer; let sy=y+Math.sin(rot)*outer; ctx.lineTo(sx,sy); rot+=step;
+    sx=x+Math.cos(rot)*inner; sy=y+Math.sin(rot)*inner; ctx.lineTo(sx,sy); rot+=step;
   }
-  ctx.closePath();
-  ctx.fillStyle = "white";
-  ctx.fill();
+  ctx.closePath(); ctx.fillStyle="white"; ctx.fill();
 }
 
-// تحديث حركة النجوم
 function drawStars(){
   ctx.clearRect(0,0,width,height);
-  stars.forEach(s => {
-    s.y -= s.speed;
-    s.x += Math.sin(s.angle)*0.3;
-    s.angle += 0.01;
-    if(s.y<-10) s.y = height + 10;
-    if(s.x>width+10) s.x=-10;
-    if(s.x<-10) s.x=width+10;
-
-    drawStar(s.x, s.y, s.spikes, s.size, s.inner);
+  stars.forEach(s=>{
+    s.y-=s.speed; s.x+=Math.sin(s.angle)*0.3; s.angle+=0.01;
+    if(s.y<-10) s.y=height+10; if(s.x>width+10) s.x=-10; if(s.x<-10) s.x=width+10;
+    drawStar(s.x,s.y,s.spikes,s.size,s.inner);
   });
   requestAnimationFrame(drawStars);
 }
