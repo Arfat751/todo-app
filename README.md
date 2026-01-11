@@ -1,162 +1,220 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تطبيق المهام الجذاب</title>
-  <style>
-    /* ===== CSS ===== */
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to bottom, #6a11cb, #2575fc);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<title>Todo App</title>
 
-    .container {
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 30px 40px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(270deg, #764ba2, #667eea);
+  background-size: 800% 800%;
+  animation: bgMove 15s ease infinite;
+}
 
-    h1 {
-      margin-bottom: 20px;
-    }
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
-    .input-section {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+.app {
+  background: rgba(255,255,255,0.9);
+  width: 95%;
+  max-width: 420px;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
 
-    input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-    }
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #000;
+}
 
-    button {
-      padding: 10px 20px;
-      background-color: #ff6b6b;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
+.counter {
+  text-align: center;
+  color: #000;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
 
-    button:hover {
-      background-color: #ff4757;
-    }
+/* input + زر الإضافة */
+.input-box {
+  display: flex;
+  flex-direction: row-reverse; /* زر إضافة في اليسار */
+  gap: 10px;
+}
 
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
+input {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  color: #000;
+}
 
-    li {
-      background-color: rgba(255, 255, 255, 0.2);
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+input::placeholder {
+  color: #555;
+}
 
-    li.completed {
-      text-decoration: line-through;
-      background-color: rgba(0, 0, 0, 0.3);
-      color: #ccc;
-    }
+.add-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    li button {
-      background-color: #ff4757;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 12px;
-    }
+/* قائمة المهام */
+ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
 
-    li button:hover {
-      background-color: #ff6b6b;
-    }
-  </style>
+li {
+  background: #f2f2f2;
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* أزرار ✔ ✖ في اليسار */
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.done-btn,
+.delete-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.done-btn { background: #4caf50; }
+.delete-btn { background: #ff5252; }
+
+/* نص المهمة */
+.task-text {
+  flex: 1;
+  color: #000;
+  text-align: right;
+}
+
+li.done .task-text {
+  text-decoration: line-through;
+  color: #777;
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>📝 تطبيق المهام</h1>
-    <div class="input-section">
-      <input id="taskInput" placeholder="اكتب مهمة جديدة">
-      <button id="addTask">إضافة</button>
-    </div>
-    <ul id="taskList"></ul>
+
+<div class="app">
+  <h1>🔥 مهامي</h1>
+  <div class="counter" id="counter"></div>
+
+  <div class="input-box">
+    <input type="text" id="taskInput" placeholder="اكتب مهمة">
+    <button class="add-btn" id="addTask">إضافة</button>
   </div>
 
-  <script>
-    // ===== JavaScript =====
-    const input = document.getElementById("taskInput");
-    const button = document.getElementById("addTask");
-    const list = document.getElementById("taskList");
+  <ul id="taskList"></ul>
+</div>
 
-    // جلب المهام من localStorage أو إنشاء مصفوفة جديدة
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+<script>
+const input = document.getElementById("taskInput");
+const button = document.getElementById("addTask");
+const list = document.getElementById("taskList");
+const counter = document.getElementById("counter");
 
-    // دالة لعرض المهام
-    function renderTasks() {
-      list.innerHTML = "";
-      tasks.forEach((task, index) => {
-        const li = document.createElement("li");
-        li.textContent = task.text;
-        if(task.completed) li.classList.add("completed");
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-        // عند الضغط على المهمة لتعليمها كمكتملة
-        li.addEventListener("click", () => {
-          tasks[index].completed = !tasks[index].completed;
-          localStorage.setItem("tasks", JSON.stringify(tasks));
-          renderTasks();
-        });
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-        // زر حذف لكل مهمة
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "حذف";
-        deleteBtn.addEventListener("click", (e) => {
-          e.stopPropagation(); // منع تعليم المهمة عند الضغط على الحذف
-          tasks.splice(index, 1);
-          localStorage.setItem("tasks", JSON.stringify(tasks));
-          renderTasks();
-        });
+function updateCounter() {
+  counter.textContent = "المهام المتبقية: " + tasks.filter(t => !t.done).length;
+}
 
-        li.appendChild(deleteBtn);
-        list.appendChild(li);
-      });
-    }
+function renderTasks() {
+  list.innerHTML = "";
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    if (task.done) li.classList.add("done");
 
-    // إضافة مهمة جديدة
-    button.addEventListener("click", () => {
-      const taskText = input.value.trim();
-      if(taskText) {
-        tasks.push({ text: taskText, completed: false });
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-        renderTasks();
-        input.value = "";
-      }
-    });
+    const actions = document.createElement("div");
+    actions.className = "actions";
 
-    // عرض المهام عند تحميل الصفحة
-    renderTasks();
-  </script>
+    const doneBtn = document.createElement("button");
+    doneBtn.className = "done-btn";
+    doneBtn.textContent = "✔";
+    doneBtn.onclick = () => {
+      task.done = !task.done;
+      saveTasks();
+      renderTasks();
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "✖";
+    deleteBtn.onclick = () => {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    };
+
+    const span = document.createElement("span");
+    span.className = "task-text";
+    span.textContent = task.text;
+
+    /* الأزرار أولًا = يسار */
+    actions.appendChild(doneBtn);
+    actions.appendChild(deleteBtn);
+    li.appendChild(actions);
+    li.appendChild(span);
+
+    list.appendChild(li);
+  });
+
+  updateCounter();
+}
+
+button.onclick = addTask;
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") addTask();
+});
+
+function addTask() {
+  const text = input.value.trim();
+  if (!text) return;
+  tasks.push({ text, done: false });
+  saveTasks();
+  input.value = "";
+  renderTasks();
+}
+
+renderTasks();
+</script>
+
 </body>
 </html>
